@@ -7,15 +7,24 @@ function deleteEvent(event) {
 
 function deleteEvents(eventCal,startTime,endTime,title){
 
-          var oldEvents = eventCal.getEvents(startTime, endTime, {search: title});          
+        //  var oldEvents = eventCal.getEvents(startTime, endTime, {search: title});  
+          var oldEvents = eventCal.getEvents(startTime, endTime);
           Logger.log("oldEvents %s", oldEvents);
-          for (var j = 0; j < oldEvents.length; j++){             
+          for (var j = 0; j < oldEvents.length; j++){  
+             Logger.log("oldEvents[j] %s", oldEvents[j]);
              deleteEvent(oldEvents[j]);
           }
+          
+
+}
+
+function deleteAllDayEvents(eventCal,startTime){
           var oldAllDayEvents = eventCal.getEventsForDay(startTime);
-          Logger.log("oldAllDayEvents %s", oldAllDayEvents);
-          for (var jj = 0; jj < oldAllDayEvents.length; jj++){             
-             deleteEvent(oldAllDayEvents[jj]);
+          Logger.log("deleteAllDayEvents %s", oldAllDayEvents);
+          for (var jj = 0; jj < oldAllDayEvents.length; jj++){  
+            if (oldAllDayEvents[jj].isAllDayEvent()){
+              deleteEvent(oldAllDayEvents[jj]);            
+            }             
           }
 
 }
@@ -139,17 +148,26 @@ var status = [];
       
           // удаляем старые события 
       
-          deleteEvents(eventCal,startTime,endTime_1h,title);
-          deleteEvents(PMeventCal,startTime,endTime_1h,title); 
-          if (speaker[i] =='Булат Хафизов') {
-              deleteEvents(BulatEventCal,startTime,endTime_1h,title); 
-          }
-          if (speaker[i] =='Антон Кузин') {
-              deleteEvents(AntonKEventCal,startTime,endTime_1h,title); 
-          }
+      if (speaker[i] =='Антон Горыня') {    
+      //    deleteEvents(AntonGEventCal,fromDate,toDate,title);    
+          deleteAllDayEvents(AntonGEventCal,startTime);
+      } else if (speaker[i] =='Булат Хафизов') {
+      //     deleteEvents(BulatEventCal,fromDate,toDate,title);  
+           deleteAllDayEvents(BulatEventCal,startTime);
+      } else if (speaker[i] =='Антон Кузин') {
+    //    deleteEvents(AntonKEventCal,fromDate,toDate,title); 
+        deleteAllDayEvents(AntonKEventCal,startTime);
+      } else {
+   //     deleteEvents(PMeventCal,fromDate,toDate,title);
+         deleteAllDayEvents(AntonKEventCal,startTime);
+      }
       
   }
-  
+
+  deleteEvents(AntonGEventCal,fromDate,toDate,title);
+  deleteEvents(BulatEventCal,fromDate,toDate,title);
+  deleteEvents(AntonKEventCal,fromDate,toDate,title); 
+  deleteEvents(PMeventCal,fromDate,toDate,title);  
   
   
   for (var i = 1; i < data.length; i++) {        
