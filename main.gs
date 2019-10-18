@@ -68,10 +68,15 @@ var calendarId = 'thr1o8g2vobhpu57ci98it843c@group.calendar.google.com';
 var PMcalendarId = 'fu8htucc9vmpmt2ju3ddp0gqno@group.calendar.google.com';
 var BulatCalendarId ='5sajmvcpkm5v763nfdsovrkalc@group.calendar.google.com';
 var AntonKCalendarId ='qgak7vivvl9p48s9uc1jokdbeg@group.calendar.google.com';
-var eventCal = CalendarApp.getCalendarById(calendarId);
+var AntonGEventCal = CalendarApp.getCalendarById(calendarId);
 var PMeventCal = CalendarApp.getCalendarById(PMcalendarId);
 var BulatEventCal = CalendarApp.getCalendarById(BulatCalendarId);
 var AntonKEventCal = CalendarApp.getCalendarById(AntonKCalendarId);
+  
+//для удаления каленадря и да 119 = 2019 а 11 - это декабрь
+var fromDate = new Date(2019,0,1,0,0,0);
+var toDate = new Date(2019,11,31,0,0,0);  
+ Logger.log("toDate %s", toDate); 
   
 var timeZone = "GMT+03:00"
 var lastrow = sheet0.getLastRow();
@@ -122,12 +127,7 @@ var status = [];
           var title = speaker[i] +' '+ topic[i];
       
       
-    //     if (date_start_bt[i] < date_start_meeting[i] && !sheet0.getRange("A"+(i+1)).isBlank()   ) {
-     //         var startTime = date_start_bt[i];
-      //    } 
-     //     else{
-     //         var startTime = date_start_meeting[i];
-     //     }
+
           var startTime = min(date_start_bt[i], date_start_meeting[i] );
           var endTime = max(date_end_bt[i],date_end_meeting[i] );
   
@@ -138,9 +138,7 @@ var status = [];
               var endTime = new Date(2*3600000);
           }    
       
- //          var endTime = new Date(endTime);
- //          var addTime = new Date(3600000);  
- //          var endTime_1h = new Date(endTime.getTime()+2*3600000);
+
       
       
           var endTime_1h = addHours(endTime, 1);
@@ -209,7 +207,7 @@ var status = [];
            
 
            if (speaker[i] =='Антон Горыня') {
-             var event = eventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.RED);
+             var event = AntonGEventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.RED);
              if (total_days[i] == '1'){
                  event.setAllDayDate(endTime);               
                }
