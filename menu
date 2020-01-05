@@ -1,0 +1,6 @@
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('Синхронизировать Календарь')
+      .addItem('Синхронизировать', 'main')
+      .addToUi();
+}
