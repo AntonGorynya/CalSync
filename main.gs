@@ -18,8 +18,6 @@ function deleteEvents(eventCal,startTime,endTime,title){
 
 }
 
-
-
 function min(a, b){
   if (a<b && a != ''){
     return a
@@ -43,7 +41,7 @@ function addHours(time, amount_hours){
     var endTime = new Date(time);
     //  var addTime = new Date(3600000);  
    var endTime_1h = new Date(endTime.getTime()+amount_hours*3600000);
-//   Logger.log("New Time is %s", endTime_1h);
+   Logger.log("New Time is %s", endTime_1h)
    return endTime_1h
 }
 
@@ -55,22 +53,22 @@ var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 var sheet0 = spreadsheet.getSheets()[0];
 var sheet1 = spreadsheet.getSheets()[1];
 //var calendarId = sheet1.getRange('K2').getValue();
-var AntonGcalendarId = '16ga4uv7grl732umqoh8hmgeis@group.calendar.google.com';
-var PMcalendarId = '16ga4uv7grl732umqoh8hmgeis@group.calendar.google.com';
-var BulatCalendarId ='16ga4uv7grl732umqoh8hmgeis@group.calendar.google.com';
-var AntonKCalendarId ='16ga4uv7grl732umqoh8hmgeis@group.calendar.google.com';
-var AntonGEventCal = CalendarApp.getCalendarById(AntonGcalendarId);
+var AntonGoryniaCalendarId = '@group.calendar.google.com';
+var PMcalendarId = '@group.calendar.google.com';
+var BulatCalendarId ='@group.calendar.google.com';
+var AntonKCalendarId ='@group.calendar.google.com';
+var MarinaPCalendarId ='@group.calendar.google.com';
+  
+var AntonGEventCal = CalendarApp.getCalendarById(AntonGoryniaCalendarId);
 var PMeventCal = CalendarApp.getCalendarById(PMcalendarId);
 var BulatEventCal = CalendarApp.getCalendarById(BulatCalendarId);
 var AntonKEventCal = CalendarApp.getCalendarById(AntonKCalendarId);
-  
+var MarinaPEventCal = CalendarApp.getCalendarById(MarinaPCalendarId);
   
 //для удаления каленадря и да 119 = 2019 а 11 - это декабрь
-var fromDate = new Date(2019,0,1,0,0,0);
-var toDate = new Date(2019,11,31,0,0,0);  
+var fromDate = new Date(2020,0,1,0,0,0);
+var toDate = new Date(2020,11,31,0,0,0);  
  Logger.log("toDate %s", toDate); 
-  
-  
   
 var timeZone = "GMT+03:00"
 var lastrow = sheet0.getLastRow();
@@ -98,7 +96,14 @@ var speaker = [];
 var speaker_type = [];
 var status = [];
  // процес инициализации и сброса календаря 
-    for (var i = 1; i < data.length; i++) {        
+  
+  deleteEvents(AntonGEventCal,fromDate,toDate,title);
+  deleteEvents(BulatEventCal,fromDate,toDate,title);
+  deleteEvents(AntonKEventCal,fromDate,toDate,title); 
+  deleteEvents(MarinaPEventCal,fromDate,toDate,title);
+  deleteEvents(PMeventCal,fromDate,toDate,title);
+  // i = 99 - что бы начать с 100 строки где начинается 2020
+    for (var i = 99; i < data.length; i++) {        
            date_start_bt[i] = data[i][0];  
            date_end_bt[i] = data[i][1]; 
            date_start_meeting[i] = data[i][2]; 
@@ -116,12 +121,11 @@ var status = [];
            topic[i] = data[i][12];
            speaker[i] = data[i][13];
            speaker_type[i] = data[i][14];
-           status[i] = data[i][15];
+           status[i] = data[i][15];  
   }
-  deleteEvents(AntonGEventCal,fromDate,toDate,title);
-  deleteEvents(BulatEventCal,fromDate,toDate,title);
-  deleteEvents(AntonKEventCal,fromDate,toDate,title); 
-  deleteEvents(PMeventCal,fromDate,toDate,title);
+
+  
+  
   
   for (var i = 1; i < data.length; i++) {        
           var date_start_bt = data[i][0];  
@@ -157,7 +161,8 @@ var status = [];
   
            
     
-           //добавляем события в календарь.           
+           //добавляем события в календарь.  
+          // addEventToCal(eventCal,title, speaker, startTime, endTime, city,date_start_meetingS , date_end_meetingS, total_days);
            
 
            if (speaker[i] =='Антон Горыня') {
@@ -166,54 +171,66 @@ var status = [];
                  event.setAllDayDate(endTime);               
                }
            } 
+           if (speaker[i] =='Марина Привалова') {
+             var event = MarinaPEventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.PALE_RED);
+             if (total_days[i] == '1'){
+                 event.setAllDayDate(endTime);               
+               }
+           }
            if (speaker[i] =='Антон Кузин') {
              var event = AntonKEventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.BLUE);
              if (total_days[i] == '1'){
                  event.setAllDayDate(endTime);               
                }
            }
-//           if (speaker[i] =='Булат Хафизов') {
-//             var event = BulatEventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.GREEN);
-//             if (total_days[i] == '1'){
-//                 event.setAllDayDate(endTime);               
-//               }
-//           }
-//           if (speaker[i] =='Максим Савельев') {             
-//             var event = PMeventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.CYAN);
-//             if (total_days[i] == '1'){
-//                 event.setAllDayDate(endTime);               
-//               }
-//           }
-//           if (speaker[i] =='Константин Белянин') {             
-//             var event = PMeventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.GRAY);
-//             if (total_days[i] == '1'){
-//                 event.setAllDayDate(endTime);               
-//               }
-//           }
-//           if (speaker[i] =='Tatiana Tan') {             
-//             var event = PMeventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.MAUVE);
-//             if (total_days[i] == '1'){
-//                 event.setAllDayDate(endTime);               
-//               }
- //          }
-//           if (speaker[i] =='Julia Yu') {             
-//             var event = PMeventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.ORANGE);
-//             if (total_days[i] == '1'){
- //                event.setAllDayDate(endTime);               
-//               }
-//           }
-//           if (speaker[i] =='Иван Григорьев') {             
-//             var event = PMeventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.PALE_BLUE);
-//             if (total_days[i] == '1'){
-//                 event.setAllDayDate(endTime);               
-//               }
-//           }
-//           if (speaker[i] =='Ray Zhang') {             
-//             var event = PMeventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.YELLOW);
-//             if (total_days[i] == '1'){
-//                 event.setAllDayDate(endTime);               
-//               }
-//           }
+           if (speaker[i] =='Булат Хафизов') {
+             var event = BulatEventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.GREEN);
+             if (total_days[i] == '1'){
+                 event.setAllDayDate(endTime);               
+               }
+           }
+           if (speaker[i] =='Максим Савельев') {             
+             var event = PMeventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.CYAN);
+             if (total_days[i] == '1'){
+                 event.setAllDayDate(endTime);               
+               }
+           }
+           if (speaker[i] =='Константин Белянин') {             
+             var event = PMeventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.GRAY);
+             if (total_days[i] == '1'){
+                 event.setAllDayDate(endTime);               
+               }
+           }
+           if (speaker[i] =='Tatiana Tan') {             
+             var event = PMeventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.MAUVE);
+             if (total_days[i] == '1'){
+                 event.setAllDayDate(endTime);               
+               }
+           }
+           if (speaker[i] =='Julia Yu') {             
+             var event = PMeventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.ORANGE);
+             if (total_days[i] == '1'){
+                 event.setAllDayDate(endTime);               
+               }
+           }
+           if (speaker[i] =='Иван Григорьев') {             
+             var event = PMeventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.PALE_BLUE);
+             if (total_days[i] == '1'){
+                 event.setAllDayDate(endTime);               
+               }
+           }
+           if (speaker[i] =='Ray Zhang') {             
+             var event = PMeventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.YELLOW);
+             if (total_days[i] == '1'){
+                 event.setAllDayDate(endTime);               
+               }
+           }
+           if (speaker[i] =='Борис Дятлов') {             
+             var event = PMeventCal.createEvent(title,   new Date(startTime),    new Date(endTime_1h), {location: city[i], description: 'Тип мероприятия: '+ type[i] +'\nДаты мероприятия: ' + date_start_meetingS[i] + '--' + date_end_meetingS[i]} ).setColor(CalendarApp.EventColor.PALE_GREEN);
+             if (total_days[i] == '1'){
+                 event.setAllDayDate(endTime);               
+               }
+           }
 
   
     
